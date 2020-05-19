@@ -26,7 +26,7 @@ def sample_item(user, name='shirt'):
     return Item.objects.create(user=user, name=name)
 
 def sample_post(user, **params):
-    """Create and return a sample recipe"""
+    """Create and return a sample post"""
     defaults = {
         'title': 'Sample Post'
     }
@@ -103,3 +103,49 @@ class PrivatePostApiTest(TestCase):
 
         serializer = PostDetailSerializer(post)
         self.assertEqual(res.data, serializer.data)
+    
+    def test_create_basic_post(self):
+        """Test creating post"""
+        payload = {
+            'title': 'Summer outfit',
+        }
+        res = self.client.post(POSTS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        post = Post.objects.get(id=res.data['id'])
+        for key in payload.keys():
+            self.assertEqual(payload[key], getattr(post, key))
+    
+    def test_create_post_with_tags(self):
+        """Test creating a post with tags"""
+        tag1 = sample_tag(user=self.user, name='Casual')
+        tag2 = sample_tag(user=self.user, name='Night out')
+        payload = {
+            'title': 'Test outfit',
+            'tags': [tag1.id, tag2.id],
+        }
+        res = self.client.post(POSTS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        post = Post.objects.get(id=res.data['id'])
+        tags = post.tags.all()
+        self.assertEqual(tags.count(), 2)
+        self.assertIn(tag1, tags)
+        self.assertIn(tag2, tags)
+    
+    def test_create_post_with_items(self):
+        """Test creating post with items"""
+        item1 = sample_item(user=self.user, name='Shirt')
+        item2 = sample_item(user=self.user, name='Trouser')
+        payload = {
+            'title': 'Summer outfit',
+            'items': [item1.id, item2.id],
+        }
+        res = self.client.post(POSTS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        post = Post.objects.get(id=res.data['id'])
+        items = post.items.all()
+        self.assertEqual(items.count(), 2)
+        self.assertIn(item1, items)
+        self.assertIn(item1, items)
