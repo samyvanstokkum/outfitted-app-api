@@ -35,3 +35,8 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ('id', 'title', 'items', 'tags')
         read_only_fields = ('id',)
+
+class PostDetailSerializer(PostSerializer):
+    """Serialze a post detail"""
+    items = ItemSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)

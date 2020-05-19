@@ -5,13 +5,25 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Post
+from core.models import Post, Item, Tag
 
-from post.serializers import PostSerializer
+from post.serializers import PostSerializer, PostDetailSerializer
 
 
 POSTS_URL = reverse('post:post-list')
 
+
+def detail_url(post_id):
+    """Return post detail url"""
+    return reverse('post:post-detail', args=[post_id])
+
+def sample_tag(user, name='Casual'):
+    """Create and return sample tag"""
+    return Tag.objects.create(user=user, name=name)
+
+def sample_item(user, name='shirt'):
+    """Create and return sample item"""
+    return Item.objects.create(user=user, name=name)
 
 def sample_post(user, **params):
     """Create and return a sample recipe"""
@@ -80,6 +92,14 @@ class PrivatePostApiTest(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data, serializer.data)
 
+    def test_view_post_detail(self):
+        """Test viewing a post detail"""
+        post = sample_post(user=self.user)
+        post.tags.add(sample_tag(user=self.user))
+        post.items.add(sample_item(user=self.user))
 
+        url = detail_url(post.id)
+        res = self.client.get(url)
 
-
+        serializer = PostDetailSerializer(post)
+        self.assertEqual(res.data, serializer.data)
