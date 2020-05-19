@@ -82,3 +82,12 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(item), item.name)
+    
+    def test_post_str(self):
+        """Test the post string representation"""
+        post = models.Post.objects.create(
+            user = sample_user(),
+            title = 'My summer outfit'
+        )
+
+        self.assertEqual(str(post), post.title)

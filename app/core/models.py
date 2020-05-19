@@ -59,3 +59,16 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+
+class Post(models.Model):
+    """Post object"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=255, blank=True)
+    items = models.ManyToManyField('Item')
+    tags = models.ManyToManyField('Tag')
+
+    def __str__(self):
+        return self.title
