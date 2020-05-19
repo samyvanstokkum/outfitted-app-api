@@ -15,6 +15,6 @@ class ItemSerializer(serializers.ModelSerializer):
     """Serializer for item objects"""
 
     class Meta:
-        model = Tag
+        model = Item
         fields = ('id', 'name')
         read_only_fields = ('id',)
