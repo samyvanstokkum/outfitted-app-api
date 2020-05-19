@@ -74,3 +74,11 @@ class ModelTests(TestCase):
 
         self.assertEqual(str(tag), tag.name)
 
+    def test_item_str(self):
+        """Test the item string representation"""
+        item = models.Item.objects.create(
+            user = sample_user(),
+            name = 'shirt',
+        )
+
+        self.assertEqual(str(item), item.name)
