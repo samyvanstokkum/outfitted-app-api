@@ -149,3 +149,38 @@ class PrivatePostApiTest(TestCase):
         self.assertEqual(items.count(), 2)
         self.assertIn(item1, items)
         self.assertIn(item1, items)
+
+    def test_partial_update_post(self):
+        """Test updating a post with patch"""
+        post = sample_post(user=self.user)
+        post.tags.add(sample_tag(user=self.user))
+        new_tag = sample_tag(user=self.user, name='Belt')
+
+        payload = {
+            'title': 'Autumn Outfit',
+            'tags': [new_tag.id]
+        }
+        url = detail_url(post.id)
+        self.client.patch(url, payload)
+
+        post.refresh_from_db()
+        self.assertEqual(post.title, payload['title'])
+        tags = post.tags.all()
+        self.assertEqual(len(tags), 1)
+        self.assertIn(new_tag, tags)
+
+    def test_full_update_post(self):
+        """Test updating a post with a put"""
+        post = sample_post(user=self.user)
+        post.tags.add(sample_tag(user=self.user))
+
+        payload = {
+            'title': 'Spring Outfit',
+        }
+        url = detail_url(post.id)
+        self.client.put(url, payload)
+
+        post.refresh_from_db()
+        self.assertEqual(post.title, payload['title'])
+        tags = post.tags.all()
+        self.assertEqual(len(tags), 0)
