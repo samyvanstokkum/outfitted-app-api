@@ -7,7 +7,7 @@ from django.conf import settings
 
 
 def post_image_file_path(instance, file_name):
-    """Generate file path for new recipe image"""
+    """Generate file path for new post image"""
     ext = file_name.split('.')[-1]
     file_name = f'{uuid.uuid4()}.{ext}'
 
@@ -80,7 +80,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255, blank=True)
     items = models.ManyToManyField('Item')
     tags = models.ManyToManyField('Tag')
-    images = models.ImageField(null=True, upload_to=post_image_file_path)
+    image = models.ImageField(null=True, upload_to=post_image_file_path)
 
     def __str__(self):
         return self.title
