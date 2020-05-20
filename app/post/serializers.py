@@ -16,7 +16,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ('id', 'name')
+        fields = ('id', 'name',)
         read_only_fields = ('id',)
 
 
@@ -33,8 +33,9 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'items', 'tags')
-        read_only_fields = ('id',)
+        fields = ('id', 'title', 'items', 'tags', 'image')
+        read_only_fields = ('id', 'image')
+
 
 class PostDetailSerializer(PostSerializer):
     """Serialze a post detail"""
